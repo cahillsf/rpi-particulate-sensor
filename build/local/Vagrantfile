@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+home      = ENV["$HOME"]
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+
+  config.vm.synced_folder "#{home}/poky", "/mnt/poky",
+    type: "virtualbox",  # Use VirtualBox's native folder sharing
+    owner: "vagrant",
+    group: "vagrant",
+    mount_options: ["uid=1000", "gid=1000"]
+  
+  config.vm.synced_folder "#{home}/meta-mylayer", "/mnt/meta-mylayer",
+    type: "virtualbox",
+    owner: "vagrant",
+    group: "vagrant",
+    mount_options: ["uid=1000", "gid=1000"]
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 71680  # memory in MB (70 GB)
+    vb.cpus = 4
+  end
+
+end

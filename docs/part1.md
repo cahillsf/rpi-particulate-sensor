@@ -10,14 +10,15 @@ Also writing this doc from scratch so I don't forgot how to write and type sente
 
 ## Build the OS
 
-I [forked and updated](https://github.com/cahillsf/meta-mylayer/tree/walnascar) the layer from the hackster post to make it compatible with the most recent (at time of writing) [Yocto](https://www.yoctoproject.org/) release `wasnascar`.  To test and build the OS it I used two separate envs, a local one for quick development and then a chunkier machine on AWS to run the build.  Details linked below, definitely did not "overoptimize" here so I'm sure there are improvements that could be made.
+I [forked and updated](https://github.com/cahillsf/meta-mylayer/tree/walnascar) the layer from the hackster post to make it compatible with the most recent (at time of writing) [Yocto](https://www.yoctoproject.org/) release `walnascar`.  To test and build the OS it I used two separate envs, a local one for quick development and then a chunkier machine on AWS to run the build.  Details linked below (I'm on a 2020 Mac AMD), did not "overoptimize" here so I'm sure there are improvements that could be made.
 
-
-### Vagrantbox
+### Vagrant + Virtualbox
 
 [config](../build/local/)
 
-Mounts 
+Darwin doesn't play well with the build process in my limited experience, so I used [vagrant + virtualbox](https://developer.hashicorp.com/vagrant/docs/providers/virtualbox) to setup a linux env and test the layer. 
+
+Assumes you have both [poky](https://github.com/yoctoproject/poky) and [my-layer](https://github.com/cahillsf/meta-mylayer/tree/walnascar) available in your home dir and mounts them into the VM.
 
 
 ### AWS
