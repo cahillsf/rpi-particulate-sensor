@@ -24,3 +24,5 @@ Assumes you have both [poky](https://github.com/yoctoproject/poky) and [my-layer
 ### AWS
 
 [config](../build/clouds/)
+
+Terraform config for an EC2 to run the build of the custom OS image.
