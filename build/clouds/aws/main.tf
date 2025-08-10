@@ -31,7 +31,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_instance_connect" {
   from_port         = 22
   ip_protocol       = "tcp"
   to_port           = 22
-  prefix_list_id = data.aws_ec2_managed_prefix_list.ec2_ic.id
+  prefix_list_id    = data.aws_ec2_managed_prefix_list.ec2_ic.id
 }
 
 
@@ -60,17 +60,17 @@ resource "aws_instance" "yocto_builder" {
   ###  builder
 
   instance_type = "c6a.2xlarge"
-  ami = "<TODO>"
+  ami           = "<TODO>"
 
   root_block_device {
-    volume_size = 150  # 100 GB disk
+    volume_size = 150 # 100 GB disk
     volume_type = "gp3"
   }
   iam_instance_profile = "image-builder"
 
   # common
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
-  subnet_id = var.subnet_id
+  subnet_id              = var.subnet_id
 
 
   tags = {
