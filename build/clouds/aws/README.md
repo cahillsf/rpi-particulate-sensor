@@ -37,10 +37,12 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Target subnet for EC2 launch | `string` | n/a | yes |
+| <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Target public subnet for EC2 build machine launch | `string` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | Target VPC for EC2 launch | `string` | n/a | yes |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_instance_id"></a> [instance\_id](#output\_instance\_id) | The EC2 instance ID of the launched image. |
 <!-- END_TF_DOCS -->

@@ -5,5 +5,5 @@ variable "vpc_id" {
 
 variable "subnet_id" {
   type        = string
-  description = "Target subnet for EC2 launch"
+  description = "Target public subnet for EC2 build machine launch"
 }
