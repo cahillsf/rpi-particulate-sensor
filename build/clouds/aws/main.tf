@@ -1,13 +1,3 @@
-data "aws_region" "current" {}
-
-data "aws_ec2_managed_prefix_list" "ec2_ic" {
-  name = "com.amazonaws.${data.aws_region.current.name}.ec2-instance-connect"
-}
-
-data "aws_vpc" "selected" {
-  id = var.vpc_id
-}
-
 resource "aws_security_group" "allow_tls" {
   name        = "allow_tls"
   description = "Allow TLS inbound traffic and all outbound traffic"
@@ -84,5 +74,37 @@ resource "aws_ec2_instance_state" "yocto_builder" {
   state       = "running"
 }
 
+resource "aws_iam_role" "image_builder" {
+  name               = "image_builder"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
 
-# TODO add bucket + IAM for pushing up built image
+resource "aws_iam_role_policy_attachment" "image_builder" {
+  role       = aws_iam_role.image_builder.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_policy" "image_artifact_upload" {
+  name = "image-artifact-upload"
+  policy = data.aws_iam_policy_document.image_builder_upload.json
+}
+
+resource "aws_iam_instance_profile" "image_builder" {
+  name = "image_builder"
+  role = aws_iam_role.role.name
+}
+
+
+
+resource "aws_s3_bucket" "image_artifacts" {
+  bucket = var.bucket_name
+}
+
+resource "aws_s3_bucket_public_access_block" "image_artifacts" {
+  bucket = aws_s3_bucket.image_artifacts.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
