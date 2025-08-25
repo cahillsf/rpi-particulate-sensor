@@ -1,4 +1,4 @@
-# Custom RPI OS Image SPS30 Integration
+# Custom RPI OS Image with Sensirion SPS30 Integration
 
 [Starting point + inspiration](https://www.hackster.io/david-gherghita/air-quality-monitor-using-raspberry-pi-4-sps30-and-azure-03cb42#code)
 

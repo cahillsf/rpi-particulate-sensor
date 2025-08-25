@@ -56,7 +56,7 @@ resource "aws_instance" "yocto_builder" {
     volume_size = 150 # 100 GB disk
     volume_type = "gp3"
   }
-  iam_instance_profile = "image-builder"
+  iam_instance_profile = aws_iam_instance_profile.image_builder.name
 
   # common
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
@@ -75,7 +75,7 @@ resource "aws_ec2_instance_state" "yocto_builder" {
 }
 
 resource "aws_iam_role" "image_builder" {
-  name               = "image_builder"
+  name               = "image-builder"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
@@ -90,7 +90,7 @@ resource "aws_iam_policy" "image_artifact_upload" {
 }
 
 resource "aws_iam_instance_profile" "image_builder" {
-  name = "image_builder"
+  name = "image-builder"
   role = aws_iam_role.role.name
 }
 
