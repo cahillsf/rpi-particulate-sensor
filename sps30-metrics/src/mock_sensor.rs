@@ -63,16 +63,25 @@ impl MockSps30 {
         Ok(())
     }
 
-    pub fn read_device_product_type(&mut self) -> Result<String, Box<dyn std::error::Error>> {
-        Ok("SPS30".to_string())
+    pub fn read_device_product_type(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
+        let mut bytes = [0u8; 32];
+        let product_type = b"SPS30";
+        bytes[..product_type.len()].copy_from_slice(product_type);
+        Ok(bytes)
     }
 
-    pub fn read_device_serial_number(&mut self) -> Result<String, Box<dyn std::error::Error>> {
-        Ok("MOCK_SERIAL_001".to_string())
+    pub fn read_device_serial_number(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
+        let mut bytes = [0u8; 32];
+        let serial = b"MOCK_SERIAL_001";
+        bytes[..serial.len()].copy_from_slice(serial);
+        Ok(bytes)
     }
 
-    pub fn read_firmware_version(&mut self) -> Result<String, Box<dyn std::error::Error>> {
-        Ok("2.2".to_string())
+    pub fn read_firmware_version(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
+        let mut bytes = [0u8; 32];
+        let version = b"2.2";
+        bytes[..version.len()].copy_from_slice(version);
+        Ok(bytes)
     }
 
     pub fn start_fan_cleaning(&mut self) -> Result<(), Box<dyn std::error::Error>> {
@@ -105,13 +114,13 @@ impl Sensor for MockSps30 {
     }
     
     // Device information methods
-    fn read_device_product_type(&mut self) -> Result<String, Box<dyn std::error::Error>> { 
+    fn read_device_product_type(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> { 
         MockSps30::read_device_product_type(self) 
     }
-    fn read_device_serial_number(&mut self) -> Result<String, Box<dyn std::error::Error>> { 
+    fn read_device_serial_number(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> { 
         MockSps30::read_device_serial_number(self) 
     }
-    fn read_firmware_version(&mut self) -> Result<String, Box<dyn std::error::Error>> { 
+    fn read_firmware_version(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> { 
         MockSps30::read_firmware_version(self) 
     }
 }

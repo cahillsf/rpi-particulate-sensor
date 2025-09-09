@@ -15,13 +15,11 @@ impl RealSps30 {
     }
 
     pub fn wake_up(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        self.sensor.wake_up()?;
-        Ok(())
+        Ok(self.sensor.wake_up()?)
     }
 
     pub fn start_measurement(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        self.sensor.start_measurement()?;
-        Ok(())
+        Ok(self.sensor.start_measurement()?)
     }
 
     pub fn read_data_ready_flag(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
@@ -33,24 +31,22 @@ impl RealSps30 {
     }
 
     pub fn stop_measurement(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        self.sensor.stop_measurement()?;
-        Ok(())
+        Ok(self.sensor.stop_measurement()?)
     }
 
     pub fn sleep(&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        self.sensor.sleep()?;
-        Ok(())
+        Ok(self.sensor.sleep()?)
     }
 
-    pub fn read_device_product_type(&mut self) -> Result<String, Box<dyn std::error::Error>> {
+    pub fn read_device_product_type(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
         Ok(self.sensor.read_device_product_type()?)
     }
 
-    pub fn read_device_serial_number(&mut self) -> Result<String, Box<dyn std::error::Error>> {
+    pub fn read_device_serial_number(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
         Ok(self.sensor.read_device_serial_number()?)
     }
 
-    pub fn read_firmware_version(&mut self) -> Result<String, Box<dyn std::error::Error>> {
+    pub fn read_firmware_version(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
         Ok(self.sensor.read_firmware_version()?)
     }
 
@@ -83,13 +79,13 @@ impl Sensor for RealSps30 {
     }
     
     // Device information methods
-    fn read_device_product_type(&mut self) -> Result<String, Box<dyn std::error::Error>> { 
+    fn read_device_product_type(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> { 
         RealSps30::read_device_product_type(self) 
     }
-    fn read_device_serial_number(&mut self) -> Result<String, Box<dyn std::error::Error>> { 
+    fn read_device_serial_number(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> { 
         RealSps30::read_device_serial_number(self) 
     }
-    fn read_firmware_version(&mut self) -> Result<String, Box<dyn std::error::Error>> { 
+    fn read_firmware_version(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> { 
         RealSps30::read_firmware_version(self) 
     }
 }
