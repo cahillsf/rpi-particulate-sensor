@@ -82,13 +82,13 @@ impl Sensor for RealSps30 {
     }
     
     // Device information methods
-    fn read_device_product_type(&mut self) -> Result<[u8; 32], SensorError> { 
+    fn read_device_product_type(&mut self) -> Result<[u8; 8], SensorError> { 
         RealSps30::read_device_product_type(self) 
     }
-    fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError> { 
+    fn read_device_serial_number(&mut self) -> Result<[u8; 8], SensorError> { 
         RealSps30::read_device_serial_number(self) 
     }
-    fn read_firmware_version(&mut self) -> Result<[u8; 32], SensorError> { 
+    fn read_firmware_version(&mut self) -> Result<[u8; 8], SensorError> { 
         RealSps30::read_firmware_version(self) 
     }
 }
