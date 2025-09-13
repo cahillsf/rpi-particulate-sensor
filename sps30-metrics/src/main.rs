@@ -29,7 +29,7 @@ mod real_sensor;
 pub enum SensorError {
     #[error("SPS30 I2C communication error: {0:?}")]
     #[cfg(target_os = "linux")]
-    I2c(#[from] sps30_i2c::types::Error<LinuxI2CError>),
+    I2c(sps30_i2c::types::Error<LinuxI2CError>),
     
     #[error("Sensor initialization failed: {message}")]
     Init { message: String },
@@ -42,6 +42,14 @@ pub enum SensorError {
     
     #[error("Network error: {0}")]
     Network(#[from] Box<dyn std::error::Error + Send + Sync>),
+}
+
+// Manual From implementation for sps30_i2c::types::Error since it doesn't implement std::error::Error
+#[cfg(target_os = "linux")]
+impl From<sps30_i2c::types::Error<LinuxI2CError>> for SensorError {
+    fn from(err: sps30_i2c::types::Error<LinuxI2CError>) -> Self {
+        SensorError::I2c(err)
+    }
 }
 
 trait Sensor {
