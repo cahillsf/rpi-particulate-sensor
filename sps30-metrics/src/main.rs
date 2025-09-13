@@ -48,7 +48,7 @@ trait Sensor {
     
     // Device information methods
     fn read_device_product_type(&mut self) -> Result<[u8; 8], SensorError>;
-    fn read_device_serial_number(&mut self) -> Result<[u8; 8], SensorError>;
+    fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError>;
     fn read_firmware_version(&mut self) -> Result<[u8; 8], SensorError>;
     fn start_fan_cleaning(&mut self) -> Result<(), SensorError>;
 }
@@ -82,15 +82,15 @@ async fn main() -> Result<(), SensorError> {
     sensor.wake_up()?;
     sensor.start_measurement()?;
 
-    let bytes_to_string = |bytes: [u8; 8]| -> String {
+    let bytes_to_string = |bytes: &[u8]| -> String {
         let string_bytes: Vec<u8> = bytes.iter().take_while(|&&b| b != 0).cloned().collect();
         String::from_utf8(string_bytes).unwrap_or_else(|_| "INVALID_UTF8".to_string())
     };
 
     let tags = vec![
-        ("product_type".to_string(), bytes_to_string(sensor.read_device_product_type()?)),
-        ("serial_number".to_string(), bytes_to_string(sensor.read_device_serial_number()?)),
-        ("firmware_version".to_string(), bytes_to_string(sensor.read_firmware_version()?)),
+        ("product_type".to_string(), bytes_to_string(&sensor.read_device_product_type()?)),
+        ("serial_number".to_string(), bytes_to_string(&sensor.read_device_serial_number()?)),
+        ("firmware_version".to_string(), bytes_to_string(&sensor.read_firmware_version()?)),
     ];
 
     sensor.start_fan_cleaning()?;

@@ -45,7 +45,7 @@ impl RealSps30 {
         Ok(self.sensor.read_device_product_type()?)
     }
 
-    pub fn read_device_serial_number(&mut self) -> Result<[u8; 8], SensorError> {
+    pub fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError> {
         Ok(self.sensor.read_device_serial_number()?)
     }
 
