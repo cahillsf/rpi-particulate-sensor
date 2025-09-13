@@ -23,7 +23,7 @@ mod real_sensor;
 pub enum SensorError {
     #[error("SPS30 I2C communication error: {0:?}")]
     #[cfg(target_os = "linux")]
-    I2c(#[from] sps30_i2c::types::Error<linux_embedded_hal::I2cError>),
+    I2c(#[from] sps30_i2c::types::Error<LinuxI2CError>),
     
     #[error("Sensor initialization failed: {message}")]
     Init { message: String },
@@ -47,9 +47,9 @@ trait Sensor {
     fn sleep(&mut self) -> Result<(), SensorError>;
     
     // Device information methods
-    fn read_device_product_type(&mut self) -> Result<[u8; 32], SensorError>;
-    fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError>;
-    fn read_firmware_version(&mut self) -> Result<[u8; 32], SensorError>;
+    fn read_device_product_type(&mut self) -> Result<[u8; 8], SensorError>;
+    fn read_device_serial_number(&mut self) -> Result<[u8; 8], SensorError>;
+    fn read_firmware_version(&mut self) -> Result<[u8; 8], SensorError>;
     fn start_fan_cleaning(&mut self) -> Result<(), SensorError>;
 }
 
@@ -82,7 +82,7 @@ async fn main() -> Result<(), SensorError> {
     sensor.wake_up()?;
     sensor.start_measurement()?;
 
-    let bytes_to_string = |bytes: [u8; 32]| -> String {
+    let bytes_to_string = |bytes: [u8; 8]| -> String {
         let string_bytes: Vec<u8> = bytes.iter().take_while(|&&b| b != 0).cloned().collect();
         String::from_utf8(string_bytes).unwrap_or_else(|_| "INVALID_UTF8".to_string())
     };

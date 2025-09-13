@@ -63,22 +63,22 @@ impl MockSps30 {
         Ok(())
     }
 
-    pub fn read_device_product_type(&mut self) -> Result<[u8; 32], SensorError> {
-        let mut bytes = [0u8; 32];
+    pub fn read_device_product_type(&mut self) -> Result<[u8; 8], SensorError> {
+        let mut bytes = [0u8; 8];
         let product_type = b"SPS30";
         bytes[..product_type.len()].copy_from_slice(product_type);
         Ok(bytes)
     }
 
-    pub fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError> {
-        let mut bytes = [0u8; 32];
-        let serial = b"MOCK_SERIAL_001";
+    pub fn read_device_serial_number(&mut self) -> Result<[u8; 8], SensorError> {
+        let mut bytes = [0u8; 8];
+        let serial = b"SERIAL01";
         bytes[..serial.len()].copy_from_slice(serial);
         Ok(bytes)
     }
 
-    pub fn read_firmware_version(&mut self) -> Result<[u8; 32], SensorError> {
-        let mut bytes = [0u8; 32];
+    pub fn read_firmware_version(&mut self) -> Result<[u8; 8], SensorError> {
+        let mut bytes = [0u8; 8];
         let version = b"2.2";
         bytes[..version.len()].copy_from_slice(version);
         Ok(bytes)
@@ -114,13 +114,13 @@ impl Sensor for MockSps30 {
     }
     
     // Device information methods
-    fn read_device_product_type(&mut self) -> Result<[u8; 32], SensorError> { 
+    fn read_device_product_type(&mut self) -> Result<[u8; 8], SensorError> { 
         MockSps30::read_device_product_type(self) 
     }
-    fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError> { 
+    fn read_device_serial_number(&mut self) -> Result<[u8; 8], SensorError> { 
         MockSps30::read_device_serial_number(self) 
     }
-    fn read_firmware_version(&mut self) -> Result<[u8; 32], SensorError> { 
+    fn read_firmware_version(&mut self) -> Result<[u8; 8], SensorError> { 
         MockSps30::read_firmware_version(self) 
     }
 }
