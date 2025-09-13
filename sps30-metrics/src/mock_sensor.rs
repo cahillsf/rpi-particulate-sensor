@@ -77,11 +77,8 @@ impl MockSps30 {
         Ok(bytes)
     }
 
-    pub fn read_firmware_version(&mut self) -> Result<[u8; 8], SensorError> {
-        let mut bytes = [0u8; 8];
-        let version = b"2.2";
-        bytes[..version.len()].copy_from_slice(version);
-        Ok(bytes)
+    pub fn read_firmware_version(&mut self) -> Result<(u8, u8), SensorError> {
+        Ok((2, 2))
     }
 
     pub fn start_fan_cleaning(&mut self) -> Result<(), SensorError> {
@@ -120,7 +117,7 @@ impl Sensor for MockSps30 {
     fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError> { 
         MockSps30::read_device_serial_number(self) 
     }
-    fn read_firmware_version(&mut self) -> Result<[u8; 8], SensorError> { 
+    fn read_firmware_version(&mut self) -> Result<(u8, u8), SensorError> { 
         MockSps30::read_firmware_version(self) 
     }
 }
