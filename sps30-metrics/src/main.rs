@@ -16,10 +16,8 @@ mod mock_sensor;
 
 #[cfg(target_os = "linux")]
 use sps30_i2c::types::Error;
-
-// The sps30-i2c crate uses std::io::Error for I2C operations in linux-embedded-hal
 #[cfg(target_os = "linux")]
-type LinuxI2CError = std::io::Error;
+use linux_embedded_hal::i2cdev::linux::LinuxI2CError;
 
 
 // Only include real sensor on Linux platforms
