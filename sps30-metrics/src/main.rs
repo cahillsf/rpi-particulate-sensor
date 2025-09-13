@@ -14,6 +14,12 @@ use sps30_i2c::types::AirInfo;
 use thiserror::Error;
 mod mock_sensor;
 
+#[cfg(target_os = "linux")]
+use sps30_i2c::types::Error;
+#[cfg(target_os = "linux")]
+use linux_embedded_hal::I2cError as LinuxI2CError;
+
+
 // Only include real sensor on Linux platforms
 #[cfg(target_os = "linux")]
 mod real_sensor;
