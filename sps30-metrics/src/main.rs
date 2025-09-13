@@ -16,8 +16,6 @@ mod mock_sensor;
 
 #[cfg(target_os = "linux")]
 use sps30_i2c::types::Error;
-#[cfg(target_os = "linux")]
-use linux_embedded_hal::I2cError as LinuxI2CError;
 
 
 // Only include real sensor on Linux platforms
@@ -29,7 +27,7 @@ mod real_sensor;
 pub enum SensorError {
     #[error("SPS30 I2C communication error: {0:?}")]
     #[cfg(target_os = "linux")]
-    I2c(#[from] sps30_i2c::types::Error<LinuxI2CError>),
+    I2c(#[from] sps30_i2c::types::Error<std::io::Error>),
     
     #[error("Sensor initialization failed: {message}")]
     Init { message: String },
