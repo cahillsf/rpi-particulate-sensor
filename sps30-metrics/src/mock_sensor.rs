@@ -15,23 +15,23 @@ impl MockSps30 {
         }
     }
 
-    pub fn wake_up(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn wake_up(&mut self) -> Result<(), SensorError> {
         println!("[MOCK] Sensor woken up");
         Ok(())
     }
 
-    pub fn start_measurement(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn start_measurement(&mut self) -> Result<(), SensorError> {
         println!("[MOCK] Started measurements");
         Ok(())
     }
 
-    pub fn read_data_ready_flag(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
+    pub fn read_data_ready_flag(&mut self) -> Result<bool, SensorError> {
         // Simulate data being ready every second
         let elapsed = self.start_time.elapsed().as_secs();
         Ok(elapsed > 0 && elapsed % 1 == 0)
     }
 
-    pub fn read_measured_values(&mut self) -> Result<AirInfo, Box<dyn std::error::Error>> {
+    pub fn read_measured_values(&mut self) -> Result<AirInfo, SensorError> {
         let mut counter = self.counter.lock().unwrap();
         *counter += 1;
         
@@ -53,74 +53,74 @@ impl MockSps30 {
         })
     }
 
-    pub fn stop_measurement(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn stop_measurement(&mut self) -> Result<(), SensorError> {
         println!("[MOCK] Stopped measurements");
         Ok(())
     }
 
-    pub fn sleep(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn sleep(&mut self) -> Result<(), SensorError> {
         println!("[MOCK] Sensor sleeping");
         Ok(())
     }
 
-    pub fn read_device_product_type(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
+    pub fn read_device_product_type(&mut self) -> Result<[u8; 32], SensorError> {
         let mut bytes = [0u8; 32];
         let product_type = b"SPS30";
         bytes[..product_type.len()].copy_from_slice(product_type);
         Ok(bytes)
     }
 
-    pub fn read_device_serial_number(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
+    pub fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError> {
         let mut bytes = [0u8; 32];
         let serial = b"MOCK_SERIAL_001";
         bytes[..serial.len()].copy_from_slice(serial);
         Ok(bytes)
     }
 
-    pub fn read_firmware_version(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
+    pub fn read_firmware_version(&mut self) -> Result<[u8; 32], SensorError> {
         let mut bytes = [0u8; 32];
         let version = b"2.2";
         bytes[..version.len()].copy_from_slice(version);
         Ok(bytes)
     }
 
-    pub fn start_fan_cleaning(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn start_fan_cleaning(&mut self) -> Result<(), SensorError> {
         println!("[MOCK] Started fan cleaning");
         Ok(())
     }
 }
 
 impl Sensor for MockSps30 {
-    fn wake_up(&mut self) -> Result<(), Box<dyn std::error::Error>> { 
+    fn wake_up(&mut self) -> Result<(), SensorError> { 
         MockSps30::wake_up(self) 
     }
-    fn start_measurement(&mut self) -> Result<(), Box<dyn std::error::Error>> { 
+    fn start_measurement(&mut self) -> Result<(), SensorError> { 
         MockSps30::start_measurement(self) 
     }
-    fn read_data_ready_flag(&mut self) -> Result<bool, Box<dyn std::error::Error>> { 
+    fn read_data_ready_flag(&mut self) -> Result<bool, SensorError> { 
         MockSps30::read_data_ready_flag(self) 
     }
-    fn read_measured_values(&mut self) -> Result<AirInfo, Box<dyn std::error::Error>> { 
+    fn read_measured_values(&mut self) -> Result<AirInfo, SensorError> { 
         MockSps30::read_measured_values(self) 
     }
-    fn stop_measurement(&mut self) -> Result<(), Box<dyn std::error::Error>> { 
+    fn stop_measurement(&mut self) -> Result<(), SensorError> { 
         MockSps30::stop_measurement(self) 
     }
-    fn sleep(&mut self) -> Result<(), Box<dyn std::error::Error>> { 
+    fn sleep(&mut self) -> Result<(), SensorError> { 
         MockSps30::sleep(self) 
     }
-    fn start_fan_cleaning(&mut self) -> Result<(), Box<dyn std::error::Error>> { 
+    fn start_fan_cleaning(&mut self) -> Result<(), SensorError> { 
         MockSps30::start_fan_cleaning(self) 
     }
     
     // Device information methods
-    fn read_device_product_type(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> { 
+    fn read_device_product_type(&mut self) -> Result<[u8; 32], SensorError> { 
         MockSps30::read_device_product_type(self) 
     }
-    fn read_device_serial_number(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> { 
+    fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError> { 
         MockSps30::read_device_serial_number(self) 
     }
-    fn read_firmware_version(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> { 
+    fn read_firmware_version(&mut self) -> Result<[u8; 32], SensorError> { 
         MockSps30::read_firmware_version(self) 
     }
 }

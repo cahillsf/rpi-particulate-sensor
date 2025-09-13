@@ -9,6 +9,7 @@ edition = "2021"
 datadog-api-client = "0.16.0"
 sps30-i2c = { git = "https://github.com/cahillsf/sps30-i2c-rs", branch = "updates" }
 tokio = { version = "1.47.1", features = ["full"] }
+thiserror = "1.0"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 linux-embedded-hal = "0.3"

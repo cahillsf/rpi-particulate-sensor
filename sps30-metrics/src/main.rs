@@ -11,29 +11,50 @@ use datadog_api_client::datadogV2::model::MetricPoint;
 use datadog_api_client::datadogV2::model::MetricResource;
 use datadog_api_client::datadogV2::model::MetricSeries;
 use sps30_i2c::types::AirInfo;
+use thiserror::Error;
 mod mock_sensor;
 
 // Only include real sensor on Linux platforms
 #[cfg(target_os = "linux")]
 mod real_sensor;
 
+// Define our application-level error type
+#[derive(Error, Debug)]
+pub enum SensorError {
+    #[error("SPS30 I2C communication error: {0:?}")]
+    #[cfg(target_os = "linux")]
+    I2c(#[from] sps30_i2c::types::Error<linux_embedded_hal::I2cError>),
+    
+    #[error("Sensor initialization failed: {message}")]
+    Init { message: String },
+    
+    #[error("Data not ready after timeout")]
+    Timeout,
+    
+    #[error("Configuration error: {message}")]
+    Config { message: String },
+    
+    #[error("Network error: {0}")]
+    Network(#[from] Box<dyn std::error::Error + Send + Sync>),
+}
+
 trait Sensor {
-    fn wake_up(&mut self) -> Result<(), Box<dyn std::error::Error>>;
-    fn start_measurement(&mut self) -> Result<(), Box<dyn std::error::Error>>;
-    fn read_data_ready_flag(&mut self) -> Result<bool, Box<dyn std::error::Error>>;
-    fn read_measured_values(&mut self) -> Result<AirInfo, Box<dyn std::error::Error>>;
-    fn stop_measurement(&mut self) -> Result<(), Box<dyn std::error::Error>>;
-    fn sleep(&mut self) -> Result<(), Box<dyn std::error::Error>>;
+    fn wake_up(&mut self) -> Result<(), SensorError>;
+    fn start_measurement(&mut self) -> Result<(), SensorError>;
+    fn read_data_ready_flag(&mut self) -> Result<bool, SensorError>;
+    fn read_measured_values(&mut self) -> Result<AirInfo, SensorError>;
+    fn stop_measurement(&mut self) -> Result<(), SensorError>;
+    fn sleep(&mut self) -> Result<(), SensorError>;
     
     // Device information methods
-    fn read_device_product_type(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>>;
-    fn read_device_serial_number(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>>;
-    fn read_firmware_version(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>>;
-    fn start_fan_cleaning(&mut self) -> Result<(), Box<dyn std::error::Error>>;
+    fn read_device_product_type(&mut self) -> Result<[u8; 32], SensorError>;
+    fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError>;
+    fn read_firmware_version(&mut self) -> Result<[u8; 32], SensorError>;
+    fn start_fan_cleaning(&mut self) -> Result<(), SensorError>;
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), SensorError> {
     
     // Check environment variable to determine which sensor to use
     // If ENV == "prod", use real sensor (Linux only); otherwise use mock sensor
