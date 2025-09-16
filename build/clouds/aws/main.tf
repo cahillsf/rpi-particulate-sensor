@@ -57,11 +57,10 @@ resource "aws_instance" "yocto_builder" {
     volume_type = "gp3"
   }
   iam_instance_profile = aws_iam_instance_profile.image_builder.name
-
+  user_data = file("user-data.sh")
   # common
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
   subnet_id              = var.subnet_id
-
 
   tags = {
     Name = "yocto-builder"
