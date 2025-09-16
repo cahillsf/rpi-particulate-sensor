@@ -16,3 +16,14 @@ Assumes you have both [poky](https://github.com/yoctoproject/poky) and [my-layer
 [config](../build/clouds/)
 
 Terraform config for an EC2 to run the build of the custom OS image.  The current config allows for using AWS instance connect over public internet to get a bash in the build VM.  
+
+### Transfer to S3
+
+(TODO: automate)
+
+After the image is built, push it up to the S3 bucket:
+
+```bash
+IMAGE_FILE=$(ls /home/yocto/poky/rpi-build/tmp/deploy/images/raspberrypi4-64/ | grep 'wic.bz2')
+aws s3 cp "/home/yocto/poky/rpi-build/tmp/deploy/images/raspberrypi4-64/$(ls /home/yocto/poky/rpi-build/tmp/deploy/images/raspberrypi4-64/ | grep 'wic.bz2')" s3://<TARGET_BUCKET>/images/
+```
