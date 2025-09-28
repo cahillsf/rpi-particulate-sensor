@@ -10,6 +10,9 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip
 unzip awscliv2.zip
 sudo ./aws/install
 
+# export secrets
+export DATADOG_API_KEY=${datadog_api_key}
+
 # probably not right
 echo 'kernel.unprivileged_userns_clone=1' | sudo tee /etc/sysctl.d/99-yocto.conf
 sudo systemctl stop apparmor

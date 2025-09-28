@@ -12,3 +12,8 @@ variable "bucket_name" {
   type        = string
   description = "Name of the S3 bucket to store the built image"
 }
+
+variable "datadog_api_key" {
+  type        = string
+  description = "Datadog API key"
+}
