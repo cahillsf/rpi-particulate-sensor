@@ -1,0 +1,43 @@
+# Yocto Build Directories
+build/tmp/
+build/downloads/
+build/sstate-cache/
+build/cache/
+build/workspace/
+
+# Yocto Configuration Files with Secrets
+build/conf/site.conf
+build/conf/auto.conf
+
+# Terraform Files with Secrets
+build/clouds/aws/terraform.tfvars
+build/clouds/aws/.terraform/
+build/clouds/aws/terraform.tfstate*
+
+# Build Artifacts
+*.log
+*.swp
+*.swo
+*~
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.sublime-*
+
+# OS Generated Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Rust Build Artifacts
+target/
+Cargo.lock
+
+# Temporary Files
+*.tmp
+*.temp

@@ -57,7 +57,14 @@ resource "aws_instance" "yocto_builder" {
     volume_type = "gp3"
   }
   iam_instance_profile = aws_iam_instance_profile.image_builder.name
-  user_data = templatefile("user-data.sh.tpl", { datadog_api_key = var.datadog_api_key })
+  user_data = templatefile("user-data.sh.tpl", {
+    datadog_api_key      = var.datadog_api_key
+    pi_user_password     = var.pi_user_password
+    github_token         = var.github_token
+    wifi_ssid            = var.wifi_ssid
+    wifi_password        = var.wifi_password
+    yocto_user_password  = var.yocto_user_password
+  })
   # common
   vpc_security_group_ids = [aws_security_group.allow_tls.id]
   subnet_id              = var.subnet_id
