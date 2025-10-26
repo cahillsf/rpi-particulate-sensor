@@ -11,12 +11,13 @@ Prereqs:
 2. Pull down the compressed image:
 
 ```bash
-aws s3 cp s3://<SOURCE_BUCKET>/images/<IMAGE_FILE> ./
+aws s3 cp s3://<SOURCE_BUCKET>/images/<IMAGE_FILENAME>.wic.bz2 ./
 ```
 
 3. Unzip and rename to expected fmt:
 
 ```bash
+bunzip2 <IMAGE_FILENAME>.wic.bz2
 mv <IMAGE_FILE>.wic <IMAGE_FILE>.img
 ```
 

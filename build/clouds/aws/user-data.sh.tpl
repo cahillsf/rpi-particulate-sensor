@@ -3,15 +3,12 @@
 
 # yocto build reqs: https://docs.yoctoproject.org/ref-manual/system-requirements.html#ubuntu-and-debian
 sudo apt-get update
-sudo apt-get install build-essential chrpath cpio debianutils diffstat file gawk gcc git iputils-ping libacl1 liblz4-tool locales python3 python3-git python3-jinja2 python3-pexpect python3-pip python3-subunit socat texinfo unzip wget xz-utils zstd
+sudo apt-get install -y build-essential chrpath cpio debianutils diffstat file gawk gcc git iputils-ping libacl1 liblz4-tool locales python3 python3-git python3-jinja2 python3-pexpect python3-pip python3-subunit socat texinfo unzip wget xz-utils zstd
 
 
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
-
-# export secrets for runtime use
-export DATADOG_API_KEY=${datadog_api_key}
 
 # probably not right
 echo 'kernel.unprivileged_userns_clone=1' | sudo tee /etc/sysctl.d/99-yocto.conf
@@ -23,7 +20,12 @@ sudo sysctl --system
 sudo adduser --disabled-password --gecos "" yocto
 echo "yocto:${yocto_user_password}" | sudo chpasswd
 sudo usermod -aG sudo yocto
-su - yocto
+
+# Run the rest of the setup as the yocto user
+sudo -u yocto bash << YOCTO_SETUP
+# export secrets for runtime use
+export PI_USER_PASSWORD_HASH=$(echo "${pi_user_password}" | openssl passwd -6 -stdin)
+cd /home/yocto
 
 # clone repos
 git clone -b scarthgap --depth 1 https://git.yoctoproject.org/poky
@@ -33,6 +35,7 @@ git clone -b scarthgap --depth 1 https://github.com/cahillsf/meta-mylayer.git
 git clone -b master --depth 1 https://github.com/rust-embedded/meta-rust-bin.git
 
 # init build env
+cd poky
 source oe-init-build-env rpi-build
 
 # add layers
@@ -44,7 +47,7 @@ bitbake-layers add-layer ../../meta-openembedded/meta-networking
 bitbake-layers add-layer ../../meta-rust-bin
 
 # Create local.conf with our Raspberry Pi configuration
-cat > conf/local.conf << 'EOF'
+cat > conf/local.conf << EOF
 # defaults from https://github.com/yoctoproject/poky/blob/scarthgap/meta-poky/conf/templates/default/local.conf.sample
 DISTRO ?= "poky"
 EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
@@ -65,21 +68,25 @@ CONF_VERSION = "2"
 # options specific to our build
 MACHINE = "raspberrypi4-64"
 LICENSE_FLAGS_ACCEPTED += "synaptics-killswitch"
-EXTRA_USERS_PARAMS = "\
-  useradd -p '$${@oe.utils.crypt_password(d.getVar('PI_USER_PASSWORD') or 'raspberry')}' pi; \
-"
 IMAGE_ROOTFS_EXTRA_SPACE = "8388608"
 ENABLE_I2C = "1"
 KERNEL_MODULE_AUTOLOAD:rpi += "i2c-dev i2c-bcm2708"
-CORE_IMAGE_EXTRA_INSTALL += "bash nano tar zip curl ca-certificates ntp tzdata packagegroup-core-buildessential i2c-tools git startup-script rust-metrics dropbear rust rust-dev cargo"
+CORE_IMAGE_EXTRA_INSTALL += "bash nano tar zip curl ca-certificates ntp tzdata packagegroup-core-buildessential i2c-tools git startup-script rust-metrics dropbear rust rust-dev cargo env-vars"
+IMAGE_CLASSES += "extrausers"
+EXTRA_USERS_PARAMS = "\
+  useradd -m -s /bin/bash pi; \
+  usermod -p '${PI_USER_PASSWORD_HASH}' pi; \
+"
 
-require site.conf
+# Note: site.conf is automatically included by Yocto's default configuration
+# The variables from site.conf will be available without explicit require
 EOF
 
+# Hash the pi user password for secure storage
+
 # Create site.conf with injected secrets
-cat > conf/site.conf << 'EOF'
+cat > conf/site.conf << EOF
 # Secrets injected by Terraform during EC2 instance launch
-PI_USER_PASSWORD = "${pi_user_password}"
 DATADOG_API_KEY = "${datadog_api_key}"
 %{ if github_token != "" }
 GITHUB_TOKEN = "${github_token}"
@@ -94,6 +101,14 @@ EOF
 
 # Set proper permissions
 chmod 600 conf/site.conf
+
+YOCTO_SETUP
+
+## need to:
+## - modify the local.conf
+## - inject secrets (WIFI connection + DD API Key)
+## - upload the image to S3
+
 
 # Configuration files created, ready to build
 

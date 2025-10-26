@@ -25,5 +25,5 @@ After the image is built, push it up to the S3 bucket:
 
 ```bash
 IMAGE_FILE=$(ls /home/yocto/poky/rpi-build/tmp/deploy/images/raspberrypi4-64/ | grep 'wic.bz2')
-aws s3 cp "/home/yocto/poky/rpi-build/tmp/deploy/images/raspberrypi4-64/$(ls /home/yocto/poky/rpi-build/tmp/deploy/images/raspberrypi4-64/ | grep 'wic.bz2')" s3://<TARGET_BUCKET>/images/
+aws s3 cp "/home/yocto/poky/rpi-build/tmp/deploy/images/raspberrypi4-64/$IMAGE_FILE" s3://<TARGET_BUCKET>/images/
 ```
