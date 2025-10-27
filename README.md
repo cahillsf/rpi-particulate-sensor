@@ -12,6 +12,8 @@ AWS terraform examples for resources to build the OS image and push it up to S3 
 - [Project Overview](docs/overview.md)
 - [Building the Custom OS Image](docs/os-build..md)
 - [Mounting the Custom OS Image](docs/os-mount.md)
+- [Connect the Sensor](doc/connecting.md)
+- [Submitting the Air Quality Metrics to Datadog](docs/submit-metrics.md)
 
 ## Hardware
 
