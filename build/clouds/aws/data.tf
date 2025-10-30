@@ -27,13 +27,13 @@ data "aws_iam_policy_document" "image_builder_upload" {
     effect = "Allow"
 
     actions = [
-        "s3:PutObject",
-        "s3:ListBucket",
+      "s3:PutObject",
+      "s3:ListBucket",
 
     ]
     resources = [
-        "arn:aws:s3:::${var.bucket_name}/*",
-        "arn:aws:s3:::${var.bucket_name}"
+      "arn:aws:s3:::${var.bucket_name}/*",
+      "arn:aws:s3:::${var.bucket_name}"
     ]
   }
 }

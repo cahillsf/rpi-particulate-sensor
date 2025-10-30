@@ -61,8 +61,8 @@ Example metric query dashboard:
 
 
 JSON snippet of the dashboard config:
-- [View on GitHub](config/assets/dashboard.json)
-- [Download raw JSON](https://raw.githubusercontent.com/YOUR_USERNAME/rpi-particulate-sensor/main/docs/config/assets/dashboard.json)
+- [View on GitHub](docs/assets/dashboard.json)
+- [Download raw JSON](https://raw.githubusercontent.com/cahillsf/rpi-particulate-sensor/main/docs/config/assets/dashboard.json)
 
 ### TODO
 - fix EXTRA_USERS password settings and guidance
