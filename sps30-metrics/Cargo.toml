@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 datadog-api-client = "0.16.0"
-sps30-i2c = { git = "https://github.com/cahillsf/sps30-i2c-rs", branch = "updates" }
+sps30-i2c = { git = "https://github.com/cahillsf/sps30-i2c-rs", branch = "cahillsf/export-types" }
 tokio = { version = "1.47.1", features = ["full"] }
 thiserror = "1.0"
 
