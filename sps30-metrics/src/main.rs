@@ -13,6 +13,7 @@ use datadog_api_client::datadogV2::model::MetricSeries;
 use sps30_i2c::types::AirInfo;
 use thiserror::Error;
 mod mock_sensor;
+mod mock_display;
 
 #[cfg(target_os = "linux")]
 use sps30_i2c::types::Error;
@@ -23,6 +24,20 @@ use linux_embedded_hal::i2cdev::linux::LinuxI2CError;
 // Only include real sensor on Linux platforms
 #[cfg(target_os = "linux")]
 mod real_sensor;
+
+// Only include real display on Linux platforms
+#[cfg(target_os = "linux")]
+mod real_display;
+
+// Define Display error type
+#[derive(Error, Debug)]
+pub enum DisplayError {
+    #[error("Display initialization failed: {message}")]
+    Init { message: String },
+    
+    #[error("Display communication error: {message}")]
+    Communication { message: String },
+}
 
 // Define our application-level error type
 #[derive(Error, Debug)]
@@ -42,6 +57,9 @@ pub enum SensorError {
     
     #[error("Network error: {0}")]
     Network(#[from] Box<dyn std::error::Error + Send + Sync>),
+    
+    #[error("Display error: {0}")]
+    Display(#[from] DisplayError),
 }
 
 // Manual From implementation for sps30_i2c::types::Error since it doesn't implement std::error::Error
@@ -65,6 +83,12 @@ trait Sensor {
     fn read_device_serial_number(&mut self) -> Result<[u8; 32], SensorError>;
     fn read_firmware_version(&mut self) -> Result<(u8, u8), SensorError>;
     fn start_fan_cleaning(&mut self) -> Result<(), SensorError>;
+}
+
+// Display trait for TM1637
+trait Display {
+    fn show_value(&mut self, value: f32) -> Result<(), DisplayError>;
+    fn clear(&mut self) -> Result<(), DisplayError>;
 }
 
 #[tokio::main]
@@ -91,6 +115,21 @@ async fn main() -> Result<(), SensorError> {
         println!("Running in development mode (ENV={})", env_mode);
         println!("Using mock sensor - set ENV=prod to use real sensor (Linux only)");
         Box::new(mock_sensor::MockSps30::new())
+    };
+
+    // Initialize display
+    let mut display: Box<dyn Display> = if env_mode == "prod" {
+        #[cfg(target_os = "linux")]
+        {
+            // GPIO 17 for CLK, GPIO 18 for DIO
+            Box::new(real_display::RealDisplay::new(17, 18)?)
+        }
+        #[cfg(not(target_os = "linux"))]
+        {
+            Box::new(mock_display::MockDisplay::new())
+        }
+    } else {
+        Box::new(mock_display::MockDisplay::new())
     };
 
     sensor.wake_up()?;
@@ -121,6 +160,12 @@ async fn main() -> Result<(), SensorError> {
                     Ok(air_info) => {
                         println!("Air quality data: {:?}", air_info);
                         println!("Tags: {:?}", tags);
+                        
+                        // Display PM2.5 on TM1637
+                        if let Err(e) = display.show_value(air_info.mass_pm2_5) {
+                            eprintln!("Display error: {}", e);
+                        }
+                        
                         let body = build_metrics_payload(air_info, Some(tags.clone()));
                         
                         let configuration = datadog::Configuration::new();
