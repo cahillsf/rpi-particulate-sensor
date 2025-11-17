@@ -113,6 +113,10 @@ async fn main() -> Result<(), SensorError> {
     println!("Starting infinite metrics collection loop...");
     println!("Press Ctrl+C to stop");
 
+    let mut consecutive_errors = 0;
+    const MAX_CONSECUTIVE_ERRORS: u32 = 5;
+    const BASE_BACKOFF_SECS: u64 = 30;
+
     loop {
 
         match sensor.read_data_ready_flag() {
@@ -125,21 +129,39 @@ async fn main() -> Result<(), SensorError> {
                         
                         let configuration = datadog::Configuration::new();
                         let api = MetricsAPI::with_config(configuration);
-                        let resp = api
-                            .submit_metrics(body, SubmitMetricsOptionalParams::default())
-                            .await;
+                        
+                        let submit_future = api.submit_metrics(body, SubmitMetricsOptionalParams::default());
+                        let resp = tokio::time::timeout(
+                            Duration::from_secs(30),
+                            submit_future
+                        ).await;
                         
                         match resp {
-                            Ok(value) => {
+                            Ok(Ok(value)) => {
                                 println!("Metrics response: {:#?}", value);
+                                consecutive_errors = 0;
                             }
-                            Err(e) => {
+                            Ok(Err(e)) => {
                                 eprintln!("Error submitting metrics: {:#?}", e);
+                                consecutive_errors += 1;
                             }
+                            Err(_) => {
+                                eprintln!("Timeout submitting metrics (30s exceeded)");
+                                consecutive_errors += 1;
+                            }
+                        }
+                        
+                        if consecutive_errors >= MAX_CONSECUTIVE_ERRORS {
+                            // Exponential backoff: 30s, 60s, 90s, ..., capped at 300s (10x base)
+                            let backoff_multiplier = consecutive_errors.saturating_sub(MAX_CONSECUTIVE_ERRORS - 1).min(10) as u64;
+                            let backoff_duration = Duration::from_secs(BASE_BACKOFF_SECS * backoff_multiplier);
+                            eprintln!("Too many consecutive errors ({}), backing off for {:?}", consecutive_errors, backoff_duration);
+                            thread::sleep(backoff_duration);
                         }
                     }
                     Err(e) => {
                         eprintln!("Error reading sensor values: {:?}", e);
+                        consecutive_errors += 1;
                     }
                 }
             }
@@ -148,6 +170,7 @@ async fn main() -> Result<(), SensorError> {
             }
             Err(e) => {
                 eprintln!("Error checking data ready flag: {:?}", e);
+                consecutive_errors += 1;
             }
         }
 
