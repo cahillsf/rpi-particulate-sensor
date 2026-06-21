@@ -23,7 +23,7 @@ Metrics response: IntakePayloadAccepted {
 Once you have logged in, you can submit the metrics directly as root user by running:
 
 ```bash
-ENV=prod DD_SITE="datadoghq.com" DD_API_KEY="$DATADOG_API_KEY" sps30-metrics
+env ENV=prod DD_SITE="datadoghq.com" DD_API_KEY="$DATADOG_API_KEY" nohup sps30-metrics > sps30-metrics.log 2>&1 &
 ```
 
 ### Log in via SSH
