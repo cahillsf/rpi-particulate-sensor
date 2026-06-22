@@ -1665,7 +1665,7 @@ dependencies = [
 [[package]]
 name = "sps30-i2c"
 version = "0.1.0"
-source = "git+https://github.com/cahillsf/sps30-i2c-rs?branch=updates#9768b30fc38f09342f216892335af4e0679ad30a"
+source = "git+https://github.com/cahillsf/sps30-i2c-rs?branch=cahillsf%2Fexport-types#d576de81e326b123eb4b76a14b30ccbcc05e8219"
 dependencies = [
  "byteorder",
  "embedded-hal",

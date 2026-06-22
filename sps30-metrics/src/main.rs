@@ -10,7 +10,7 @@ use datadog_api_client::datadogV2::model::MetricPayload;
 use datadog_api_client::datadogV2::model::MetricPoint;
 use datadog_api_client::datadogV2::model::MetricResource;
 use datadog_api_client::datadogV2::model::MetricSeries;
-use sps30_i2c::types::AirInfo;
+use sps30_i2c::AirInfo;
 use thiserror::Error;
 mod mock_sensor;
 
